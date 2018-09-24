@@ -45,7 +45,6 @@ Resources:
                 requestTemplates:
                   application/json: '{"statusCode": 200}'
                 type: mock
-              # responses: {}
             post:
               x-amazon-apigateway-integration:
                 httpMethod: POST
@@ -56,6 +55,7 @@ Resources:
                     statusCode: 200
                     responseParameters:
                       method.response.header.Access-Control-Allow-Origin: "'*'"
+              responses: {}
       EndpointConfiguration: REGIONAL
     Metadata:
       StackeryName: Form Submissions

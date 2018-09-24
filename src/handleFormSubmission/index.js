@@ -1,8 +1,8 @@
-exports.handler = async (event, _, callback) => {
+exports.handler = async message => {
   console.log('Hello!');
-  console.log(event);
+  console.log(message);
 
-  callback({
+  return {
     isBase64Encoded: false,
     statusCode: 200,
     headers: {
@@ -12,5 +12,5 @@ exports.handler = async (event, _, callback) => {
       'Access-Control-Allow-Origin': '*'
     },
     body: { message: 'Everything is awesome!' }
-  });
+  };
 };

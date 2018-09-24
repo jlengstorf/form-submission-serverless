@@ -5,7 +5,6 @@ Resources:
   api1D2FE91F:
     Type: AWS::Serverless::Api
     Properties:
-      Cors: 'http://localhost:8000'
       Name: !Sub
         - ${ResourceName} From Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName}
         - ResourceName: Form Submissions

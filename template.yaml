@@ -51,7 +51,11 @@ Resources:
                 httpMethod: POST
                 type: aws_proxy
                 uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${functionC88E24BE.Arn}/invocations
-              responses: {}
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
       EndpointConfiguration: REGIONAL
     Metadata:
       StackeryName: Form Submissions

@@ -1,3 +1,80 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: Stackery Serverless API Example Stack
+Resources:
+  api1D2FE91F:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub
+        - ${ResourceName} From Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName}
+        - ResourceName: Form Submissions
+      StageName: !Ref StackeryEnvironmentAPIGatewayStageName
+      DefinitionBody:
+        swagger: '2.0'
+        info: {}
+        paths:
+          /submit:
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${functionC88E24BE.Arn}/invocations
+              responses: {}
+      EndpointConfiguration: REGIONAL
+    Metadata:
+      StackeryName: Form Submissions
+  functionC88E24BE:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-functionC88E24BE
+      Description: !Sub
+        - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Function ${ResourceName}
+        - ResourceName: handleFormSubmission
+      CodeUri: src/handleFormSubmission
+      Handler: index.handler
+      Runtime: nodejs8.10
+      MemorySize: 3008
+      Timeout: 30
+      Tracing: Active
+      Policies:
+        - AWSXrayWriteOnlyAccess
+        - DynamoDBCrudPolicy:
+            TableName: !Ref table4DBAA098
+      Events:
+        api1D2FE91F:
+          Type: Api
+          Properties:
+            Path: /submit
+            Method: POST
+            RestApiId: !Ref api1D2FE91F
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref table4DBAA098
+          TABLE_ARN: !GetAtt table4DBAA098.Arn
+    Metadata:
+      StackeryName: handleFormSubmission
+  table4DBAA098:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      TableName: !Sub ${AWS::StackName}-table4DBAA098
+Parameters:
+  StackeryStackTagName:
+    Type: String
+    Description: Stack Name (injected by Stackery at deployment time)
+  StackeryEnvironmentTagName:
+    Type: String
+    Description: Environment Name (injected by Stackery at deployment time)
+  StackeryEnvironmentAPIGatewayStageName:
+    Type: String
+    Description: Environment name used for API Gateway Stage names (injected by Stackery at deployment time)
